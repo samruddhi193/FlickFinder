@@ -1,0 +1,16 @@
+pandas
+numpy
+scikit-learn
+scikit-surprise
+mlxtend
+matplotlib
+seaborn
+plotly
+networkx
+sqlalchemy
+pyyaml
+scipy
+statsmodels
+tqdm
+requests
+jupyter

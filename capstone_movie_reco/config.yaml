@@ -1,0 +1,18 @@
+# Configuration for Capstone Movie Recommendation System
+
+api_keys:
+  tmdb: "YOUR_TMDB_API_KEY_HERE"
+
+dataset_paths:
+  raw: "data/raw/"
+  processed: "data/processed/"
+  warehouse: "data/warehouse/"
+
+model_hyperparameters:
+  n_factors: 50
+  knn_k: 40
+  hybrid_alpha: 0.5
+
+apriori_thresholds:
+  min_support: 0.05
+  min_confidence: 0.2
