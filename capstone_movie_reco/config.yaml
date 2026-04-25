@@ -1,18 +1,35 @@
-# Configuration for Capstone Movie Recommendation System
+project:
+  name: "ReelRec"
+  prn: "PASTE_YOUR_PRN"
+  author: "PASTE_YOUR_NAME"
 
-api_keys:
-  tmdb: "YOUR_TMDB_API_KEY_HERE"
+tmdb_api:
+  api_key: "PASTE_YOUR_TMDB_API_KEY"
+  base_url: "https://api.themoviedb.org/3"
 
-dataset_paths:
-  raw: "data/raw/"
-  processed: "data/processed/"
+paths:
+  raw_data: "data/raw/"
+  processed_data: "data/processed/"
   warehouse: "data/warehouse/"
+  figures: "outputs/figures/"
+  models: "outputs/models/"
 
-model_hyperparameters:
-  n_factors: 50
-  knn_k: 40
-  hybrid_alpha: 0.5
+filtering:
+  min_user_ratings: 20
+  min_movie_ratings: 5
+  train_test_split: 0.8
 
-apriori_thresholds:
+collaborative:
+  n_neighbours: 20
+  svd_factors: 100
+  svd_epochs: 20
+
+hybrid:
+  alpha: 0.7
+
+apriori:
   min_support: 0.05
-  min_confidence: 0.2
+  min_confidence: 0.4
+
+evaluation:
+  k_values: [5, 10, 20]

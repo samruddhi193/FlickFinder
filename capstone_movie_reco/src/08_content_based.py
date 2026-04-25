@@ -30,7 +30,7 @@ def compute_sim_matrix_memmap(item_features, output_path):
     print("Memmapped Cosine Structural calculation fully finalized mapped onto disk.")
     return mmap
 
-def generate_profile_recs(test_users, user_data, item_features, train_df, feature_mappings, top_n=10):
+def generate_profile_recs(test_users, user_data, item_features, train_df, movies_df, top_n=10):
     print("\nExecuting Machine Filter over User Profiles via TFIDF matrices...")
     user_profiles_matrix = user_data['matrix']
     user_to_idx = user_data['user_lookup_map']
@@ -39,7 +39,7 @@ def generate_profile_recs(test_users, user_data, item_features, train_df, featur
     user_seen = train_df.groupby('userId')['movieId'].apply(set).to_dict()
     
     # Construct mappings instantly matching sequential index directly to canonical ID
-    idx_to_movie = dict(zip(feature_mappings['feature_index'], feature_mappings['movieId']))
+    idx_to_movie = {i: m for i, m in enumerate(movies_df['movieId'])}
     
     valid_users = [u for u in test_users if u in user_to_idx]
     
@@ -54,7 +54,7 @@ def generate_profile_recs(test_users, user_data, item_features, train_df, featur
         profile_vector = user_profiles_matrix[u_idx]
         
         # Conduct natively embedded Cosine Factorizations utilizing user dimensional vector directly!
-        sim_scores = cosine_similarity(profile_vector, item_features)[0]
+        sim_scores = cosine_similarity(profile_vector.reshape(1, -1), item_features)[0]
         
         seen_movies = user_seen.get(u_id, set())
         
@@ -88,19 +88,13 @@ def get_similar_movies(movie_title, movies_df, memmap_matrix, feature_mappings, 
     if match.empty:
         return f"Warning: Title lookup '{movie_title}' unresolvable inside database dictionary."
         
-    m_id = match.iloc[0]['movieId']
-    m_loc = feature_mappings[feature_mappings['movieId'] == m_id]['feature_index'].values
-    
-    if len(m_loc) == 0:
-        return f"Error: Movie Hash Mapping failure for {m_id}."
-        
-    m_idx = m_loc[0]
+    m_idx = movies_df[movies_df['movieId'] == m_id].index[0]
     
     # Read the directly streamed memmap subset instantly natively
     sim_scores = memmap_matrix[m_idx]
     top_indices = np.argsort(sim_scores)[-(n+1):][::-1] 
     
-    idx_to_movie = dict(zip(feature_mappings['feature_index'], feature_mappings['movieId']))
+    idx_to_movie = {i: m for i, m in enumerate(movies_df['movieId'])}
     
     results = []
     for idx in top_indices:
@@ -150,7 +144,7 @@ def main():
 
     print("\n2. Isolating Predictions natively across User Vector Mapping Array...")
     test_users = test_df['userId'].unique()
-    recs_df = generate_profile_recs(test_users, user_profiles_data, item_features, train_df, feature_matrix, top_n=10)
+    recs_df = generate_profile_recs(test_users, user_profiles_data, item_features, train_df, movies_df, top_n=10)
     
     recs_path = os.path.join(outputs_dir, 'recs_content.csv')
     recs_df.to_csv(recs_path, index=False)

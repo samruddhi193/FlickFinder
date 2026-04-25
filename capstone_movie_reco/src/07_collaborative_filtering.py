@@ -234,7 +234,7 @@ def main():
     os.makedirs(models_dir, exist_ok=True)
     
     print("\n" + "="*60)
-    print("🚀 Initiating Phase 7: Heavy Collaborative Filtering Inference")
+    print(" Initiating Phase 7: Heavy Collaborative Filtering Inference")
     print("="*60)
     
     try:

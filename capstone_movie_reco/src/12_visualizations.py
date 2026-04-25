@@ -12,7 +12,7 @@ import seaborn as sns
 import warnings
 warnings.filterwarnings('ignore')
 
-PRN_NUMBER = "PRN: [INSERT_YOUR_PRN_HERE]"
+PRN_NUMBER = "PRN: [PASTE_YOUR_PRN]"
 
 def set_style():
     sns.set_style("whitegrid")
